@@ -75,7 +75,7 @@ async function getRoleId(roleName) {
 async function getEmployeeId(fullName) {
     let employee = getFirstAndLastName(fullName);
 
-    let query = `SELECT if FROM employee WHERE employee.first_name=? AND employee.last_name=?`;
+    let query = `SELECT if FROM employee WHERE employee.first_name="?" AND employee.last_name="?"`;
     let args = [employee[0], employee[1]];
     const rows = await db.query(query, args);
     return rows[0].id;
@@ -126,9 +126,29 @@ async function viewAllEmployeesByDepartment() {
     console.table(rows);
 }
 
+function getFirstAndLastName (fullName) {
+    let employee = fullName.split(" ");
+    if (employee.length == 2) {
+        return employee;
+    }
 
+    const last_name = employee[employee.length-1];
+    let first_name = " ";
+    for(let i = 0; i < employee.length-1; i++) {
+        first_name = first_name + employee[i] + " ";
+    }
+    return [first_name.trim(), last_name];
+}
 
+async function updateEmployeeRole(employeeInfo) {
+    const roleId = await getRoleId(employeeInfo.role);
+    const employee = getFirstAndLastName(employeeInfo.employeeName);
 
+    let query = `UPDATE employee SET role_id = ? WHERE id = ?`;
+    let args = [roleId, employee[0], employee[1]];
+    const rows = await db.query(query, args);
+    console.log(`Updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
+}
 
 
 

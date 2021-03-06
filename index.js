@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const db = require("./db/database");
+const myDatabase = require("./database");
 const cTable = require("console.table");
 
 const db = new Database({
@@ -75,7 +75,7 @@ async function getRoleId(roleName) {
 async function getEmployeeId(fullName) {
     let employee = getFirstAndLastName(fullName);
 
-    let query = `SELECT if FROM employee WHERE employee.first_name="?" AND employee.last_name="?"`;
+    let query = `SELECT id FROM employee WHERE employee.first_name=? AND employee.last_name=?`;
     let args = [employee[0], employee[1]];
     const rows = await db.query(query, args);
     return rows[0].id;
@@ -144,7 +144,7 @@ async function updateEmployeeRole(employeeInfo) {
     const roleId = await getRoleId(employeeInfo.role);
     const employee = getFirstAndLastName(employeeInfo.employeeName);
 
-    let query = `UPDATE employee SET role_id = ? WHERE id = ?`;
+    let query = 'UPDATE employee SET role_id=? WHERE employee.first_name=? AND employee.last_name=?';
     let args = [roleId, employee[0], employee[1]];
     const rows = await db.query(query, args);
     console.log(`Updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
@@ -152,7 +152,22 @@ async function updateEmployeeRole(employeeInfo) {
 
 
 
+async function addEmployee(employeeInfo) {
+    let roleId = await getRoleId(employeeInfo.role);
+    let managerId = await getEmployeeId(employeeInfo.manager);
 
+    // Insert into employee table
+    let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+    let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, managerId];
+    const rows = await db.query(query, args);
+    console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);
+}
+
+
+
+async function removeEmployee(employeeInfo) {
+
+}
 
 
 

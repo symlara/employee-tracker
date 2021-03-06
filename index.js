@@ -2,7 +2,7 @@ const inquirer = require("inquirer");
 const myDatabase = require("./database");
 const cTable = require("console.table");
 
-const db = new Database({
+const db = new myDatabase({
     host: "localhost",
     port: 3306,
     //MySQL username

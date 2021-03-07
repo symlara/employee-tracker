@@ -143,7 +143,7 @@ function getFirstAndLastName (fullName) {
 
 // updating an employee?
 
-
+// add an employee
 async function addEmployee(employeeInfo) {
     let roleId = await getRoleId(employeeInfo.role);
     let managerId = await getEmployeeId(employeeInfo.manager);
@@ -168,6 +168,7 @@ async function addDepartment(departmentInfo) {
     console.log(`Added department named ${departmentName}`);
 }
 
+// add a role
 async function addRole(roleInfo) {
     const departmentId = await getDepartmentId(roleInfo.departmentName);
     const salary = roleInfo.salary;
@@ -177,6 +178,24 @@ async function addRole(roleInfo) {
     const rows = await db.query(query, args);
     console.log(`Added role ${title}`);
 }
+
+// end of db calls
+
+
+
+
+// prompts for app to run in Terminal
+
+async function firstPrompt() {
+    return inquirer
+    .prompt([
+        {
+            type: "list",
+            message: "What"
+        }
+    ])
+}
+
 
 
 

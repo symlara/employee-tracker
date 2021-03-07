@@ -191,7 +191,84 @@ async function firstPrompt() {
     .prompt([
         {
             type: "list",
-            message: "What"
+            message: "What would you like to do?",
+            name: "action",
+            choices: [
+                "View all departments",
+                "View all employees",
+                "View all employees by department",
+                "View all roles",
+                //"Remove employee",
+                // "Update employee role",
+                "Add department",
+                "Add employee",
+                "Add role",
+                "Exit"
+            ]
+        }
+    ]);
+};
+// view employees info
+async function getAddEmployeeInfo() {
+    const manager = await getManagerNames();
+    const roles = await getRoles();
+    return inquirer 
+    .prompt([
+        {
+            type: "input",
+            name: "first_name",
+            message: "What is the employee's first name?"
+        },
+        {
+            type: "input",
+            name: "last_name",
+            message: "What is the employee's last name?",
+        },
+        {
+            type: "list",
+            message: "What is the employee's role?",
+            name: "role",
+            choices: [
+                // content from db
+                ... roles
+            ]
+        },
+        {
+            type: "list",
+            message: "Who is the employee's manager?",
+            name: "manager",
+            choices: [
+                // content from db
+                ... managers
+            ]
+        }
+    ]);
+};
+
+
+
+// deleteEmployee?
+
+// view department info
+async function getDepartmentInfo() {
+    return inquirer
+    .prompt([
+        {
+            type: "input",
+            message: "What is the name of the new department",
+            name: "departmentName"
+        }
+    ]);
+}
+
+async function getRoleInfo() {
+    const departments = await getDepartmentNames();
+    return inquirer
+    .prompt([
+        {
+            type: "input",
+            message: "What is the title of the new role?",
+            
         }
     ])
 }

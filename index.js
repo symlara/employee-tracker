@@ -210,7 +210,7 @@ async function firstPrompt() {
 };
 // view employees info
 async function getAddEmployeeInfo() {
-    const manager = await getManagerNames();
+    const managers = await getManagerNames();
     const roles = await getRoles();
     return inquirer 
     .prompt([
@@ -268,15 +268,121 @@ async function getRoleInfo() {
         {
             type: "input",
             message: "What is the title of the new role?",
-            
+            name: "roleName"
+
+        },
+        {
+            type: "input",
+            message: "What is the salary of the new role?",
+            name: "salary"
+        },
+        {
+            type: "list",
+            message: "Which department uses this role?",
+            name: "departmentName",
+            choices: [
+                // content from db
+                ... departments
+            ]
         }
-    ])
+    ]);
 }
 
 
+async function getUpdateEmployeeRoleInfo() {
+    const employees = await getEmployeeNames();
+    const roles = await getRoles();
+    return inquirer
+    .prompt([
+        {
+            type: "list",
+            message: "Which employee do you want to update?",
+            name: "empolyeeName",
+            choices: [
+                // content from db
+                ... employees
+            ]
+        },
+        {
+            type: "list",
+            message: "What is the employee's new role?",
+            name: "role",
+            choices: [
+                /// content from db
+                ... roles
+            ]
+        }
+    ])
 
+}
 
+async function main() {
+    let exitLoop = false;
+    while(!exitLoop) {
+        const prompt = await firstPrompt();
 
+        switch(prompt.action) {
+            case 'Add department': {
+                const newDepartmentName = await getDepartmentInfo();
+                await addDepartment(newDepartmentName);
+                break;
+            }
+
+            case 'Add employee': {
+                const newEmployee = await getAddEmployeeInfo();
+                console.log("add an employee");
+                console.log(newEmployee);
+                await addEmployee(newEmployee);
+                break;
+            }
+
+            case 'Add role': {
+                const newRole = await getRoleInfo();
+                console.log("add a role");
+                await addRole(newRole);
+                break;
+            }
+
+            // remove employee
+
+            case 'Update employee role': {
+                const employee = await getUpdateEmployeeRoleInfo();
+                await getUpdateEmployeeRoleInfo(employee);
+                break;
+            }
+
+            case 'View all departments': {
+                await viewAllDepartments();
+                break;
+            }
+
+            case 'View all employees': {
+                await viewAllEmployees();
+                break;
+            }
+
+            case 'View all employees by department': {
+                await viewAllEmployeesByDepartment();
+                break;
+            }
+
+            case 'View all roles': {
+                await viewAllRoles();
+                break;
+            }
+
+            case 'Exit': {
+                exitLoop = true;
+                process.exit(0);
+                return;
+            }
+
+            default:
+                console.log(`Internal warning. Shouldn't get this action was ${prompt.action}`);
+
+        };
+    }
+};
 
 
 

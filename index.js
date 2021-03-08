@@ -162,7 +162,7 @@ async function addEmployee(employeeInfo) {
 // add a department
 async function addDepartment(departmentInfo) {
     const departmentName = departmentInfo.departmentName;
-    let query = `INSERT INTO department name VALUES (?)`;
+    let query = `INSERT INTO department (name) VALUES (?)`;
     let args = [departmentName];
     const rows = await db.query(query, args);
     console.log(`Added department named ${departmentName}`);

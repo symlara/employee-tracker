@@ -119,12 +119,7 @@ async function viewAllEmployees() {
     console.table(rows);
 }
 
-async function viewAllEmployeesByDepartment() {
-    console.log("");
-    let query = `SELECT first_name, last_name, department.name FROM ((employee INNER JOIN role ON role_id = role.id) INNER JOIN department ON department_id = department.id)`;
-    const rows = await db.query(query);
-    console.table(rows);
-}
+
 
 function getFirstAndLastName (fullName) {
     let employee = fullName.split(" ");
@@ -141,7 +136,16 @@ function getFirstAndLastName (fullName) {
 }
 
 
-// updating an employee?
+// update an employee
+async function updateEmployeeRole(employeInfo) {
+    const roleId = await getRoleId(employeeInfo.role);
+    const employee = getFirstAndLastName(employeeInfo.employeeName);
+
+    let query = `UPDATE employee SET role_id= ? WHERE employee.first_name = ? AND employee.last_name = ?`;
+    let args = [roleId, employee[0], employee[1]];
+    const rows = await db.query(query, args);
+    console.log(`Updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
+}
 
 // add an employee
 async function addEmployee(employeeInfo) {
@@ -196,10 +200,9 @@ async function firstPrompt() {
             choices: [
                 "View all departments",
                 "View all employees",
-                "View all employees by department",
                 "View all roles",
                 //"Remove employee",
-                // "Update employee role",
+                 "Update employee role",
                 "Add department",
                 "Add employee",
                 "Add role",
@@ -358,11 +361,6 @@ async function main() {
 
             case 'View all employees': {
                 await viewAllEmployees();
-                break;
-            }
-
-            case 'View all employees by department': {
-                await viewAllEmployeesByDepartment();
                 break;
             }
 

@@ -16,7 +16,7 @@ const db = new myDatabase({
 // start calls to the database
 
 async function getManagerNames() {
-    let query = `SELECT * FROM employee WHERE manager_id IS NULL`;
+    let query = `SELECT * FROM employee WHERE manager IS NULL`;
 
     const rows = await db.query(query);
     let employeeNames = [];
@@ -119,6 +119,7 @@ async function viewAllEmployees() {
 
 
 function getFirstAndLastName( fullName ) {
+    var fullName = " ";
     let employee = fullName.split(" ");
     if (employee.length == 2) {
         return employee;
@@ -147,11 +148,11 @@ async function updateEmployeeRole(employeeInfo) {
 // add an employee
 async function addEmployee(employeeInfo) {
     let roleId = await getRoleId(employeeInfo.role);
-    let managerId = await getEmployeeId(employeeInfo.manager);
+    let manager = await getEmployeeId(employeeInfo.manager);
 
     // Insert into employee table
-    let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
-    let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, managerId];
+    let query = `INSERT INTO employee (first_name, last_name, role_id, manager) VALUES (?, ?, ?, ?)`;
+    let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, manager];
     const rows = await db.query(query, args);
     console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);
 }

@@ -23,7 +23,6 @@ CREATE TABLE employee (
   title VARCHAR(30),
   department VARCHAR(30),
   salary DECIMAL,
-  manager_id INTEGER,
-  FOREIGN KEY (manager_id) REFERENCES role(id)
+  manager VARCHAR(30)
 );
 

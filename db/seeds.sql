@@ -16,14 +16,15 @@ INSERT into role (title, salary, role_id, department) VALUES ("Cyber Security", 
 INSERT into role (title, salary, role_id, department) VALUES ("Full Stack Developer", 120000, 2, "IT");
 
 
-INSERT into employee (first_name, last_name, manager_id, department, title, salary) VALUES ("Ronald", "Firbank", 1, "Sales", "Sales Lead", 90000);
-INSERT into employee (first_name, last_name, manager_id, department, title, salary) VALUES ("Aaliyah", "Symlar", 2, "IT", "Lead Engineer", 120000);
-INSERT into employee (first_name, last_name, manager_id, department, title, salary) VALUES ("Piers", "Gaveston", 3, "Legal", "Lawyer", 190000);
+INSERT into employee (first_name, last_name, manager, department, title, salary) VALUES ("Ronald", "Firbank", "Bo", "Sales", "Sales Lead", 90000);
+INSERT into employee (first_name, last_name, manager, department, title, salary) VALUES ("Aaliyah", "Symlar", "Silk", "IT", "Lead Engineer", 120000);
+INSERT into employee (first_name, last_name, manager, department, title, salary) VALUES ("Piers", "Gaveston", "Bob", "Legal", "Lawyer", 190000);
 
-INSERT into employee (first_name, last_name, manager_id, department, title, salary) VALUES ("Brandon", "Speers", 1, "Sales", "Accountant", 95000);
-INSERT into employee (first_name, last_name, manager_id, department, title, salary) VALUES ("King ", "T'Challa", 3, "Legal", "Legal Team Lead", 100000);
-INSERT into employee (first_name, last_name, manager_id, department, title, salary) VALUES ("Thor", null, 2, "IT", "Software Engineer", 100000);
-INSERT into employee (first_name, last_name, manager_id, department, title, salary) VALUES ("Virginia", "Woolf", 2, "IT", "Cyber Security", 160000);
+
+INSERT into employee (first_name, last_name, manager, department, title, salary) VALUES ("Brandon", "Speers", "Ryan", "Sales", "Accountant", 95000);
+INSERT into employee (first_name, last_name, manager, department, title, salary) VALUES ("King ", "T'Challa", "Charles", "Legal", "Legal Team Lead", 100000);
+INSERT into employee (first_name, last_name, manager, department, title, salary) VALUES ("Thor", null, "Mike", "IT", "Software Engineer", 100000);
+INSERT into employee (first_name, last_name, manager, department, title, salary) VALUES ("Virginia", "Woolf", "Kim", "IT", "Cyber Security", 160000);
 
 
 

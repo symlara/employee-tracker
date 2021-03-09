@@ -19,7 +19,6 @@ async function getManagerNames() {
     let query = `SELECT * FROM employee WHERE manager_id IS NULL`;
 
     const rows = await db.query(query);
-    // console.log("number of rows retruned " + rows.length);
     let employeeNames = [];
     for(const employee of rows) {
         employeeNames.push(employee.first_name + " " + employee.last_name);   
@@ -30,8 +29,7 @@ async function getManagerNames() {
 async function getRoles() {
     let query = `SELECT title from role`;
     const rows = await db.query(query);
-    //console.log("number of rows returned: " + rows.length);
-
+   
     let roles = [];
     for(const row of rows) {
         roles.push(row.title);
@@ -41,13 +39,12 @@ async function getRoles() {
 }
 
 async function getDepartmentNames() {
-    let query = `SELECT name FROM department`;
+    let query = `SELECT department FROM department`;
     const rows = await db.query(query);
-    // console.log("number of rows returned: " + rows.length);
 
     let departments = [];
     for(const row of rows) {
-        departments.push(row.name);
+        departments.push(row.department);
     }
 
     return departments;
@@ -55,7 +52,7 @@ async function getDepartmentNames() {
 
 // department id
 async function getDepartmentId(department) {
-    let query = `SELECT * FROM department WHERE department.name = ?`;
+    let query = `SELECT * FROM department WHERE department = ?`;
     let args = [department];
     const rows = await db.query(query, args);
     return rows[0].id;
@@ -160,7 +157,14 @@ async function addEmployee(employeeInfo) {
 }
 
 
-
+// removeEmployee
+async function removeEmployee(employeeInfo) {
+    const employeeName = getFirstAndLastName(employeeInfo.employeeName);
+    let query = `DELETE from employee WHERE first_name = ? AND last_name = ?`;
+    let args = [employeeName[0], employeeName[1]];
+    const rows = await db.query(query, args);
+    console.log(`Employee removed: ${employeeName[0]} ${employeeName[1]}`);
+}
 
 
 
@@ -168,7 +172,7 @@ async function addEmployee(employeeInfo) {
 // add a department
 async function addDepartment(departmentInfo) {
     const departmentName = departmentInfo.departmentName;
-    let query = `INSERT INTO department (name) VALUES (?)`;
+    let query = `INSERT INTO department (department) VALUES (?)`;
     let args = [departmentName];
     const rows = await db.query(query, args);
     console.log(`Added department named ${departmentName}`);
@@ -177,9 +181,9 @@ async function addDepartment(departmentInfo) {
 // add a role
 async function addRole(roleInfo) {
     const departmentId = await getDepartmentId(roleInfo.departmentName);
-    const salary = roleInfo.salary;c
+    const salary = roleInfo.salary;
     const title = roleInfo.roleName;
-    let query = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+    let query = `INSERT INTO role (title, salary, role_id) VALUES (?, ?, ?)`;
     let args  = [title, salary, departmentId];
     const rows = await db.query(query, args);
     console.log(`Added role ${title}`);
@@ -206,6 +210,7 @@ async function firstPrompt() {
                  "Update employee role",
                 "Add department",
                 "Add employee",
+                "Remove employee",
                 "Add role",
                 "Exit"
             ]
@@ -250,6 +255,21 @@ async function getAddEmployeeInfo() {
 };
 
 
+async function getRemoveEmployeeInfo() {
+    const employees = await getEmployeeNames();
+    return inquirer
+    .prompt([
+        {
+            type: "list",
+            message: "Which employee would you like to remove?",
+            name: "employeeName",
+            choices: [
+                //content from db
+                ... employees
+            ]
+        }
+    ])
+}
 
 
 
@@ -344,6 +364,12 @@ async function main() {
                 const newRole = await getRoleInfo();
                 console.log("add a role");
                 await addRole(newRole);
+                break;
+            }
+
+            case 'Remove employee': {
+                const employee = await getRemoveEmployeeInfo();
+                await removeEmployee(employee);
                 break;
             }
 

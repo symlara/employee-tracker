@@ -54,9 +54,9 @@ async function getDepartmentNames() {
 }
 
 // department id
-async function getDepartmentId(departmentName) {
+async function getDepartmentId(department) {
     let query = `SELECT * FROM department WHERE department.name = ?`;
-    let args = [departmentName];
+    let args = [department];
     const rows = await db.query(query, args);
     return rows[0].id;
 }
@@ -160,7 +160,9 @@ async function addEmployee(employeeInfo) {
 }
 
 
-// removeEmployee 
+
+
+
 
 
 // add a department
@@ -175,7 +177,7 @@ async function addDepartment(departmentInfo) {
 // add a role
 async function addRole(roleInfo) {
     const departmentId = await getDepartmentId(roleInfo.departmentName);
-    const salary = roleInfo.salary;
+    const salary = roleInfo.salary;c
     const title = roleInfo.roleName;
     let query = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
     let args  = [title, salary, departmentId];
@@ -201,7 +203,6 @@ async function firstPrompt() {
                 "View all departments",
                 "View all employees",
                 "View all roles",
-                //"Remove employee",
                  "Update employee role",
                 "Add department",
                 "Add employee",
@@ -250,7 +251,7 @@ async function getAddEmployeeInfo() {
 
 
 
-// deleteEmployee?
+
 
 // view department info
 async function getDepartmentInfo() {
@@ -346,7 +347,6 @@ async function main() {
                 break;
             }
 
-            // remove employee
 
             case 'Update employee role': {
                 const employee = await getUpdateEmployeeRoleInfo();
@@ -363,6 +363,7 @@ async function main() {
                 await viewAllEmployees();
                 break;
             }
+
 
             case 'View all roles': {
                 await viewAllRoles();

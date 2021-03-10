@@ -139,11 +139,12 @@ function getFirstAndLastName( fullName ) {
 async function updateEmployeeRole(roleName) {
     console.log(roleName)
     let roleId = await getRoleId();
-    let employee = getFirstAndLastName();
+    let employee = roleName.employeeName.split(' ');
 
 console.log(employee);
-    let query = `UPDATE employee SET title = ? WHERE title = " "`;
-    let args = [employee[0], employee[1]];
+    let query = `UPDATE employee SET title=? WHERE first_name=? AND last_name=?`;
+    let args = [roleName.role, employee[0], employee[1]];
+   
     const rows = await db.query(query, args);
    // console.log(`Updated employee ${employeeInfo.first_name} ${employeeInfo.last_name} with role ${employeeInfo.role}`);
 }
@@ -325,7 +326,7 @@ async function getUpdateEmployeeRoleInfo() {
         {
             type: "list",
             message: "Which employee do you want to update?",
-            name: "empolyeeName",
+            name: "employeeName",
             choices: [
                 // content from db
                 ... employees

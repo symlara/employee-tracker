@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const myDatabase = require("./database");
 const cTable = require("console.table");
-const { restoreDefaultPrompts } = require("inquirer");
+// const { restoreDefaultPrompts } = require("inquirer");
 
 const db = new myDatabase({
     host: "localhost",
@@ -17,23 +17,23 @@ const db = new myDatabase({
 // start calls to the database
 
 async function getManagerNames() {
-    let query = `SELECT ALL manager FROM employee`;
-    
+    let query = `SELECT manager, id FROM employee`;
     const rows = await db.query(query);
+    
     let employeeNames = [];
     for(const employee of rows) {
-        employeeNames.push(employee.manager);
+        employeeNames.push({name: employee.manager, value: employee.id});
     }
     return employeeNames;
 }
 
 async function getRoles() {
-    let query = `SELECT title from role`;
+    let query = `SELECT title, id FROM role`;
     const rows = await db.query(query);
    
     let roles = [];
     for(const row of rows) {
-        roles.push(row.title);
+        roles.push({name: row.title, value: row.id});
     }
 
     return roles;
@@ -62,10 +62,13 @@ async function getDepartmentId(department) {
 
 // rold id
 async function getRoleId(roleName) {
-    let query = `SELECT id from role`;
-    let args = [roleName];
+    console.log(roleName);
+    let query = `SELECT id FROM role`;
+    let args = [roleName.id];
     const rows = await db.query(query, args);
-    return rows[0];
+
+    console.log(rows[0]);
+    return rows.id;
 }
 
 
@@ -73,7 +76,7 @@ async function getRoleId(roleName) {
 async function getEmployeeId(fullName) {
     let employee = getFirstAndLastName(fullName);
 
-    let query = `SELECT id FROM employee WHERE employee.first_name=? AND employee.last_name=?`;
+    let query = `SELECT id FROM employee`;
     let args = [employee];
     const rows = await db.query(query, args);
     return rows[0];
@@ -119,8 +122,8 @@ async function viewAllEmployees() {
 
 
 
-function getFirstAndLastName( fullName ) {
-    let employee = fullName.split(" ");
+ function getFirstAndLastName( fullName ) {
+//     let employee = fullName.split(" ");
 
  }
 
@@ -132,7 +135,7 @@ async function updateEmployeeRole(roleName) {
     let employee = roleName.employeeName.split(' ');
 
 console.log(employee);
-    let query = `UPDATE employee SET title=? WHERE first_name=? AND last_name=?`;
+    let query = `UPDATE employee SET title=?, WHERE id=?`;
     let args = [roleName.role, employee[0], employee[1]];
    
     const rows = await db.query(query, args);
@@ -141,14 +144,15 @@ console.log(employee);
 
 // add an employee
 async function addEmployee(employeeInfo) {
+    // console.log(employeeInfo.role);
     let roleId = await getRoleId(employeeInfo.role);
     let managerId = await getEmployeeId(employeeInfo.managerName);
-    console.log('add emp info' , employeeInfo) //begining of fucntion
-    console.log('role id', roleId)
-    console.log('role id', managerId)
+    // console.log('add emp info' , employeeInfo) //begining of fucntion
+    // console.log('role id', roleId)
+    // console.log('role id', managerId)
     // Insert into employee table
-    let query = `INSERT INTO employee (id, first_name, last_name, title, department, salary, manager) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, manager];
+     let query = `INSERT INTO employee (first_name, last_name, title, department, salary, manager) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    let args = [employeeInfo.first_name, employeeInfo.last_name, employeeInfo.title, employeeInfo.department, employeeInfo.salary, employeeInfo.manager];
     const rows = await db.query(query, args);
     console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);
 }
@@ -346,7 +350,7 @@ async function getUpdateEmployeeRoleInfo() {
 
 async function main() {
     let exitLoop = false;
-    while(!exitLoop) {
+    //while(!exitLoop) {
         const prompt = await firstPrompt();
 
         switch(prompt.action) {
@@ -410,7 +414,7 @@ async function main() {
             default:
                 console.log(`Internal warning. Shouldn't get this action was ${prompt.action}`);
 
-        };
+        //};
     }
 };
 

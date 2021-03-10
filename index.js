@@ -62,7 +62,7 @@ async function getDepartmentId(department) {
 
 // rold id
 async function getRoleId(roleName) {
-    let query = `SELECT * FROM role WHERE role.title = ?`;
+    let query = `SELECT id from role`;
     let args = [roleName];
     const rows = await db.query(query, args);
     return rows[0];
@@ -74,7 +74,7 @@ async function getEmployeeId(fullName) {
     let employee = getFirstAndLastName(fullName);
 
     let query = `SELECT id FROM employee WHERE employee.first_name=? AND employee.last_name=?`;
-    let args = [employee[0], employee[1]];
+    let args = [employee];
     const rows = await db.query(query, args);
     return rows[0];
 }
@@ -142,10 +142,10 @@ console.log(employee);
 // add an employee
 async function addEmployee(employeeInfo) {
     let roleId = await getRoleId(employeeInfo.role);
-    let managerId = await getEmployeeId(employeeInfo.manager);
+    let managerId = await getEmployeeId(employeeInfo.managerName);
 
     // Insert into employee table
-    let query = `INSERT INTO employee (first_name, last_name, title, manager) VALUES (?, ?, ?, ?)`;
+    let query = `INSERT INTO employee (id, first_name, last_name, title, department, salary, manager) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, manager];
     const rows = await db.query(query, args);
     console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);

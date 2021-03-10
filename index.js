@@ -142,7 +142,7 @@ console.log(employee);
 // add an employee
 async function addEmployee(employeeInfo) {
     let roleId = await getRoleId(employeeInfo.role);
-    let manager = await getEmployeeId(employeeInfo.manager);
+    let managerId = await getEmployeeId(employeeInfo.manager);
 
     // Insert into employee table
     let query = `INSERT INTO employee (first_name, last_name, title, manager) VALUES (?, ?, ?, ?)`;
@@ -155,10 +155,10 @@ async function addEmployee(employeeInfo) {
 // removeEmployee
 async function removeEmployee(employeeInfo) {
     const employeeName = getFirstAndLastName(employeeInfo.employeeName);
-    let query = `DELETE from employee WHERE first_name = ? AND last_name = ?`;
-    let args = [employeeName[0], employeeName[1]];
+    let query = `DELETE FROM employee WHERE id= ?`;
+    let args = [employeeName];
     const rows = await db.query(query, args);
-    console.log(`Employee removed: ${employeeName[0]} ${employeeName[1]}`);
+    console.log(`Employee removed: ${employeeName}`);
 }
 
 
@@ -215,6 +215,7 @@ async function firstPrompt() {
 // view employees info
 async function getAddEmployeeInfo() {
     const managers = await getManagerNames();
+    console.log(managers);
     const roles = await getRoles();
     return inquirer 
     .prompt([
@@ -230,8 +231,8 @@ async function getAddEmployeeInfo() {
         },
         {
             type: "list",
-            message: "What is the employee's role?",
             name: "role",
+            message: "What is the employee's role?",
             choices: [
                 // content from db
                 ... roles
@@ -239,8 +240,8 @@ async function getAddEmployeeInfo() {
         },
         {
             type: "list",
-            message: "Who is the employee's manager?",
             name: "managerName",
+            message: "Who is the employee's manager?",
             choices: [
                 ...managers
            

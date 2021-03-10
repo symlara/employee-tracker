@@ -120,19 +120,9 @@ async function viewAllEmployees() {
 
 
 function getFirstAndLastName( fullName ) {
-    var fullName = " ";
     let employee = fullName.split(" ");
-    if (employee.length == 2) {
-        return employee;
-    }
 
-    const last_name = employee[employee.length-1];
-    let first_name = " ";
-    for(let i = 0; i < employee.length-1; i++) {
-        first_name = first_name + employee[i] + " ";
-    }
-    return [first_name.trim(), last_name];
-}
+ }
 
 
 // update an employee

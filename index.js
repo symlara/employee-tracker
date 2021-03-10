@@ -143,7 +143,9 @@ console.log(employee);
 async function addEmployee(employeeInfo) {
     let roleId = await getRoleId(employeeInfo.role);
     let managerId = await getEmployeeId(employeeInfo.managerName);
-
+    console.log('add emp info' , employeeInfo) //begining of fucntion
+    console.log('role id', roleId)
+    console.log('role id', managerId)
     // Insert into employee table
     let query = `INSERT INTO employee (id, first_name, last_name, title, department, salary, manager) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, manager];
@@ -173,8 +175,10 @@ async function addDepartment(departmentInfo) {
     console.log(`Added department named ${departmentName}`);
 }
 
+
 // add a role
 async function addRole(roleInfo) {
+    console.log(roleInfo);
     const departmentId = await getDepartmentId(roleInfo.departmentName);
     const salary = roleInfo.salary;
     const title = roleInfo.roleName;

@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const myDatabase = require("./database");
 const cTable = require("console.table");
+const { restoreDefaultPrompts } = require("inquirer");
 
 const db = new myDatabase({
     host: "localhost",
@@ -16,12 +17,12 @@ const db = new myDatabase({
 // start calls to the database
 
 async function getManagerNames() {
-    let query = `SELECT * FROM employee WHERE manager IS NULL`;
-
+    let query = `SELECT ALL manager FROM employee`;
+    
     const rows = await db.query(query);
     let employeeNames = [];
     for(const employee of rows) {
-        employeeNames.push(employee.first_name + " " + employee.last_name);   
+        employeeNames.push(employee.manager);
     }
     return employeeNames;
 }
@@ -139,7 +140,7 @@ async function updateEmployeeRole(employeeInfo) {
     const roleId = await getRoleId(employeeInfo.role);
     const employee = getFirstAndLastName(employeeInfo.employeeName);
 
-    let query = `UPDATE employee SET title = ? WHERE title = ? AND employee.last_name = ?`;
+    let query = `UPDATE employee SET title = ? WHERE title = " "`;
     let args = [roleId, employee[0], employee[1]];
     const rows = await db.query(query, args);
     console.log(`Updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
@@ -246,10 +247,10 @@ async function getAddEmployeeInfo() {
         {
             type: "list",
             message: "Who is the employee's manager?",
-            name: "manager",
+            name: "managerName",
             choices: [
-                // content from db
-                ... managers
+                ...managers
+           
             ]
         }
     ]);

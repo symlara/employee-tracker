@@ -137,13 +137,15 @@ function getFirstAndLastName( fullName ) {
 
 // update an employee
 async function updateEmployeeRole(roleName) {
+    console.log(roleName)
     let roleId = await getRoleId();
     let employee = getFirstAndLastName();
 
+console.log(employee);
     let query = `UPDATE employee SET title = ? WHERE title = " "`;
     let args = [employee[0], employee[1]];
     const rows = await db.query(query, args);
-    console.log(`Updated employee ${employeeInfo.first_name} ${employeeInfo.last_name} with role ${employeeInfo.role}`);
+   // console.log(`Updated employee ${employeeInfo.first_name} ${employeeInfo.last_name} with role ${employeeInfo.role}`);
 }
 
 // add an employee
@@ -339,6 +341,10 @@ async function getUpdateEmployeeRoleInfo() {
             ]
         }
     ])
+    .then(answers => {
+        console.log("answers: ", answers);
+        return answers;
+    })
 
 }
 
@@ -378,6 +384,7 @@ async function main() {
 
             case 'Update employee role': {
                 const employee = await getUpdateEmployeeRoleInfo();
+                console.log(employee);
                 await updateEmployeeRole(employee);
                 break;
             }

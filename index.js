@@ -65,7 +65,7 @@ async function getRoleId(roleName) {
     let query = `SELECT * FROM role WHERE role.title = ?`;
     let args = [roleName];
     const rows = await db.query(query, args);
-    return rows[0].id;
+    return rows[0];
 }
 
 
@@ -76,7 +76,7 @@ async function getEmployeeId(fullName) {
     let query = `SELECT id FROM employee WHERE employee.first_name=? AND employee.last_name=?`;
     let args = [employee[0], employee[1]];
     const rows = await db.query(query, args);
-    return rows[0].id;
+    return rows[0];
 }
 
 async function getEmployeeNames() {
@@ -136,14 +136,14 @@ function getFirstAndLastName( fullName ) {
 
 
 // update an employee
-async function updateEmployeeRole(employeeInfo) {
-    const roleId = await getRoleId(employeeInfo.role);
-    const employee = getFirstAndLastName(employeeInfo.employeeName);
+async function updateEmployeeRole(roleName) {
+    let roleId = await getRoleId();
+    let employee = getFirstAndLastName();
 
     let query = `UPDATE employee SET title = ? WHERE title = " "`;
-    let args = [roleId, employee[0], employee[1]];
+    let args = [employee[0], employee[1]];
     const rows = await db.query(query, args);
-    console.log(`Updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
+    console.log(`Updated employee ${employeeInfo.first_name} ${employeeInfo.last_name} with role ${employeeInfo.role}`);
 }
 
 // add an employee
@@ -152,7 +152,7 @@ async function addEmployee(employeeInfo) {
     let manager = await getEmployeeId(employeeInfo.manager);
 
     // Insert into employee table
-    let query = `INSERT INTO employee (first_name, last_name, role_id, manager) VALUES (?, ?, ?, ?)`;
+    let query = `INSERT INTO employee (first_name, last_name, title, manager) VALUES (?, ?, ?, ?)`;
     let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, manager];
     const rows = await db.query(query, args);
     console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);

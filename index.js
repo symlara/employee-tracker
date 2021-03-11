@@ -62,10 +62,10 @@ async function getDepartmentId(departmentId) {
 
 // rold id
 async function getRoleId(employeeInfo) {
-    let employee = getFirstAndLastName();
+    let title = getRoles();
     console.log(employeeInfo);
     let query = `SELECT title FROM role`;
-    let args = [employeeInfo.title];
+    let args = title;
     const rows = await db.query(query, args);
 
     console.log(rows[0]);
@@ -330,7 +330,7 @@ async function getRoleInfo() {
 
 async function getUpdateEmployeeRoleInfo() {
     const employees = await getEmployeeNames();
-    const roles = await getRoles();
+    const title = await getRoles();
     return inquirer
     .prompt([
         {
@@ -345,10 +345,10 @@ async function getUpdateEmployeeRoleInfo() {
         {
             type: "list",
             message: "What is the employee's new role?",
-            name: "RoleName",
+            name: "title",
             choices: [
                 /// content from db
-                ... roles
+                ... title
             ]
         }
     ])
@@ -394,9 +394,9 @@ async function main() {
 
 
             case 'Update employee role': {
-                const employee = await getUpdateEmployeeRoleInfo();
-                console.log(employee);
-                await updateEmployeeRole(employee);
+                const roleName = await getUpdateEmployeeRoleInfo();
+                console.log(roleName);
+                await updateEmployeeRole(roleName);
                 break;
             }
 

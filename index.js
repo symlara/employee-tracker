@@ -17,12 +17,12 @@ const db = new myDatabase({
 // start calls to the database
 
 async function getManagerNames() {
-    let query = `SELECT manager, id FROM employee`;
+    let query = `SELECT manager FROM employee`;
     const rows = await db.query(query);
     
     let employeeNames = [];
     for(const employee of rows) {
-        employeeNames.push({name: employee.manager, value: employee.id});
+        employeeNames.push({name: employee.manager, value: employee.manager});
     }
     return employeeNames;
 }
@@ -158,7 +158,7 @@ async function addEmployee(employeeInfo) {
 // removeEmployee
 async function removeEmployee(employeeInfo) {
     const employeeName = getFirstAndLastName(employeeInfo.employeeName);
-    let query = `DELETE FROM employee WHERE id= ?`;
+    let query = `DELETE FROM employee WHERE id=?`;
     let args = [employeeName];
     const rows = await db.query(query, args);
     console.log(`Employee removed: ${employeeName}`);
@@ -219,9 +219,10 @@ async function firstPrompt() {
 };
 // view employees info
 async function getAddEmployeeInfo() {
-    const managers = await getManagerNames();
-    console.log(managers);
+    const manager = await getManagerNames();
+    console.log(manager);
     const roles = await getRoles();
+    const departments = await getDepartmentNames();
     return inquirer 
     .prompt([
         {
@@ -248,8 +249,16 @@ async function getAddEmployeeInfo() {
             name: "manager",
             message: "Who is the employee's manager?",
             choices: [
-                ...managers
+                ...manager
            
+            ]
+        },
+        {
+            type: "list",
+            name: "department",
+            message: "What is this employee's department?",
+            choices: [
+                ... departments
             ]
         }
     ]);

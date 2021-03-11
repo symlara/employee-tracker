@@ -144,15 +144,12 @@ console.log(employee);
 
 // add an employee
 async function addEmployee(employeeInfo) {
-    // console.log(employeeInfo.role);
-    let roleId = await getRoleId(employeeInfo.role);
-    let managerId = await getEmployeeId(employeeInfo.managerName);
-    // console.log('add emp info' , employeeInfo) //begining of fucntion
-    // console.log('role id', roleId)
-    // console.log('role id', managerId)
+    console.log(employeeInfo);
+    let roleId = await getRoleId(employeeInfo.title);
+    let managerId = await getEmployeeId(employeeInfo.manager);
     // Insert into employee table
-     let query = `INSERT INTO employee (first_name, last_name, title, department, salary, manager) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    let args = [employeeInfo.first_name, employeeInfo.last_name, employeeInfo.title, employeeInfo.department, employeeInfo.salary, employeeInfo.manager];
+     let query = `INSERT INTO employee SET ?`;
+    let args = employeeInfo;
     const rows = await db.query(query, args);
     console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);
 }
@@ -239,7 +236,7 @@ async function getAddEmployeeInfo() {
         },
         {
             type: "list",
-            name: "role",
+            name: "title",
             message: "What is the employee's role?",
             choices: [
                 // content from db
@@ -248,7 +245,7 @@ async function getAddEmployeeInfo() {
         },
         {
             type: "list",
-            name: "managerName",
+            name: "manager",
             message: "Who is the employee's manager?",
             choices: [
                 ...managers
@@ -350,7 +347,7 @@ async function getUpdateEmployeeRoleInfo() {
 
 async function main() {
     let exitLoop = false;
-    //while(!exitLoop) {
+    while(!exitLoop) {
         const prompt = await firstPrompt();
 
         switch(prompt.action) {
@@ -414,7 +411,7 @@ async function main() {
             default:
                 console.log(`Internal warning. Shouldn't get this action was ${prompt.action}`);
 
-        //};
+        };
     }
 };
 

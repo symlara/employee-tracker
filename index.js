@@ -136,14 +136,13 @@ async function viewAllEmployees() {
 
 // update an employee
 async function updateEmployeeRole(roleName) {
-    console.log(roleName)
     // let roleId = await getRoleId();
     let employee = roleName.employeeName.split(' ');
 
-console.log(employee);
-    let query = `UPDATE employee SET employee.title=? WHERE employee.title=?`;
-    let args = [employee.title, employee[0], employee[1]];
-   
+// console.log(employee);
+    let query = `UPDATE employee SET title = ? WHERE last_name = ?`;
+    let args = [JSON.parse(JSON.stringify(roleName.title)).title, employee[1]];
+   console.log(JSON.parse(JSON.stringify(roleName.title)).title)
     const rows = await db.query(query, args);
    // console.log(`Updated employee ${employeeInfo.first_name} ${employeeInfo.last_name} with role ${employeeInfo.role}`);
 }
@@ -151,9 +150,10 @@ console.log(employee);
 
 // add an employee
 async function addEmployee(employeeInfo) {
-    console.log(employeeInfo);
+    // console.log(employeeInfo);
     let employee = getAddEmployeeInfo();
-    let roleId = await getRoleId(employeeInfo.title);
+    let roleId = await getRoleId(JSON.parse(JSON.stringify(employeeInfo.title)).title);
+    console.log(employeeInfo.title)
     let manager = await getEmployeeId(employeeInfo.manager);
     // Insert into employee table
     let query = `INSERT INTO employee SET ?`;    

@@ -68,8 +68,13 @@ async function getRoleId(employeeInfo) {
     let args = title;
     const rows = await db.query(query, args);
 
-    console.log(rows[0]);
-    return rows.title;
+    // console.log({
+    //     "Array ": rows[0],
+    //     // "Object ": rows.title, 
+    // });
+
+     console.log(rows[0]);
+    return title;
 }
 
 

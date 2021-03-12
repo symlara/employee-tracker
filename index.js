@@ -136,7 +136,7 @@ async function updateEmployeeRole(roleName) {
     let employee = roleName.employeeName.split(' ');
 
 console.log(employee);
-    let query = `UPDATE employee SET employee.title=? WHERE employee.title=?`;
+    let query = `UPDATE employee SET title=? WHERE title=?`;
     let args = [employee.title, employee[0], employee[1]];
    
     const rows = await db.query(query, args);
@@ -158,11 +158,10 @@ async function addEmployee(employeeInfo) {
     console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);
 }
 
-
 // removeEmployee
 async function removeEmployee(employeeInfo) {
     const employeeName = getFirstAndLastName(employeeInfo.employeeName);
-    let query = `DELETE FROM employee WHERE id=?`;
+    let query = "DELETE FROM employee WHERE employee.first_name = ?";
     let args = [employeeName];
     const rows = await db.query(query, args);
     console.log(`Employee removed: ${employeeInfo.first_name} ${employeeInfo.last_name}`);

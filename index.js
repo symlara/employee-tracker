@@ -69,7 +69,7 @@ async function getRoleId(employeeInfo) {
     const rows = await db.query(query, args);
 
     console.log(rows[0]);
-    return rows.id;
+    return rows.title;
 }
 
 
@@ -124,7 +124,7 @@ async function viewAllEmployees() {
 
 
  function getFirstAndLastName( fullName ) {
-//     let employee = fullName.split(" ");
+    let employee = fullName.split(' ');
 
  }
 
@@ -136,14 +136,13 @@ async function updateEmployeeRole(roleName) {
     let employee = roleName.employeeName.split(' ');
 
 console.log(employee);
-    let query = `UPDATE employee SET title=? WHERE title=?`;
+    let query = `UPDATE employee SET employee.title=? WHERE employee.title=?`;
     let args = [employee.title, employee[0], employee[1]];
    
     const rows = await db.query(query, args);
    // console.log(`Updated employee ${employeeInfo.first_name} ${employeeInfo.last_name} with role ${employeeInfo.role}`);
 }
 
-// add an employee
 
 // add an employee
 async function addEmployee(employeeInfo) {
@@ -185,12 +184,12 @@ async function addRole(roleInfo) {
     console.log(roleInfo);
     const department = roleInfo.getDepartmentNames;
     const salary = roleInfo.salary;
-    const title = roleInfo.roleName;
+    const title = employeeInfo.title;
     const role_id = roleInfo.role_id;
      let query = `INSERT INTO role (title, salary, role_id, department) VALUES (?, ?, ?, ?)`;
     let args  = [title, salary, role_id, department];
     const rows = await db.query(query, args);
-    console.log(`Added role ${title}`);
+    console.log(`Added role ${employeeInfo.title}`);
 }
 
 // end of db calls

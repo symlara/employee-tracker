@@ -1,443 +1,231 @@
-const inquirer = require("inquirer");
-const myDatabase = require("./database");
-const cTable = require("console.table");
-// const { restoreDefaultPrompts } = require("inquirer");
+const cTable = require('console.table');
+const inquirer = require('inquirer');
+const mysql = require('mysql');
+// budget code?
+const Department = require(__dirname + '/classes/Department.js');
+const Role = require(__dirname + '/classes/Role.js');
+const Employee = require(__dirname + '/classes/Employee.js');
 
-const db = new myDatabase({
-    host: "localhost",
-    port: 3306,
-    //MySQL username
+
+const connection = mysql.createConnection({
+    host: 'localhost',
     user: 'root',
-    //MySQL password
-    password: 'Senior94',
+    password: 'password931',
     database: 'tracker_db'
 });
 
+// add employee tracker header here in GitHub
 
-// start calls to the database
+console.log('Welcome to the Employee Tracker');
+connection.connect();
+init();
 
-async function getManagerNames() {
-    let query = `SELECT manager FROM employee`;
-    const rows = await db.query(query);
-    
-    let employeeNames = [];
-    for(const employee of rows) {
-        employeeNames.push({name: employee.manager, value: employee.manager});
-    }
-    return employeeNames;
-}
-
-async function getRoles() {
-    let query = `SELECT title FROM role`;
-    const rows = await db.query(query);
-   
-    let roles = [];
-    for(const row of rows) {
-        roles.push({name: row.title, value: row});
-    }
-
-    return roles;
-}
-
-async function getDepartmentNames() {
-    let query = `SELECT department FROM department`;
-    const rows = await db.query(query);
-
-    let departments = [];
-    for(const row of rows) {
-        departments.push(row.department);
-    }
-
-    return departments;
-}
-
-// department id
-async function getDepartmentId(departmentId) {
-    let query = `SELECT department.Id FROM department`;
-    let args = [departmentId];
-    const rows = await db.query(query, args);
-    return rows[0];
-}
-
-
-// rold id
-async function getRoleId(employeeInfo) {
-    let title = getRoles();
-    console.log(employeeInfo);
-    let query = `SELECT title FROM role`;
-    let args = title;
-    const rows = await db.query(query, args);
-
-    // console.log({
-    //     "Array ": rows[0],
-    //     // "Object ": rows.title, 
-    // });
-
-     console.log(rows[0]);
-    return title;
-}
-
-
-// employee.id of manager
-async function getEmployeeId(fullName) {
-    let employee = getFirstAndLastName(fullName);
-
-    let query = `SELECT id FROM employee`;
-    let args = [employee];
-    const rows = await db.query(query, args);
-    return rows[0];
-}
-
-async function getEmployeeNames() {
-    let query = `SELECT * FROM employee`;
-
-    const rows = await db.query(query);
-    let employeeNames = [];
-    for(const employee of rows) {
-        employeeNames.push(employee.first_name + " " + employee.last_name);
-    }
-
-    return employeeNames;
-}
-
-// view all of the rows in the table
-async function viewAllRoles() {
-    console.log("");
-    // SELECT * FROM role;
-    let query = `SELECT * FROM role`;
-    const rows = await db.query(query);
-    console.table(rows);
-    return rows;
-}
-
-
-async function viewAllDepartments() {
-    let query = `SELECT * FROM department`;
-    const rows = await db.query(query);
-    console.table(rows);
-}
-
-
-async function viewAllEmployees() {
-    console.log("");
-
-    let query = `SELECT * FROM employee`;
-    const rows = await db.query(query);
-    console.table(rows);
-}
-
-
-
- function getFirstAndLastName( fullName ) {
-    let employee = fullName.split(' ');
-
- }
-
-
-// update an employee
-async function updateEmployeeRole(roleName) {
-    // let roleId = await getRoleId();
-    let employee = roleName.employeeName.split(' ');
-
-// console.log(employee);
-    let query = `UPDATE employee SET title = ? WHERE last_name = ?`;
-    let args = [JSON.parse(JSON.stringify(roleName.title)).title, employee[1]];
-   console.log(JSON.parse(JSON.stringify(roleName.title)).title)
-    const rows = await db.query(query, args);
-   // console.log(`Updated employee ${employeeInfo.first_name} ${employeeInfo.last_name} with role ${employeeInfo.role}`);
-}
-
-
-// add an employee
-async function addEmployee(employeeInfo) {
-    // console.log(employeeInfo);
-    let employee = getAddEmployeeInfo();
-    let roleId = await getRoleId(JSON.parse(JSON.stringify(employeeInfo.title)).title);
-    console.log(employeeInfo.title)
-    let manager = await getEmployeeId(employeeInfo.manager);
-    // Insert into employee table
-    let query = `INSERT INTO employee SET ?`;    
-    let args = employeeInfo;
-    const rows = await db.query(query, args);
-    console.log(`Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);
-}
-
-// removeEmployee
-async function removeEmployee(employeeInfo) {
-    const employeeName = getFirstAndLastName(employeeInfo.employeeName);
-    let query = "DELETE FROM employee WHERE employee.first_name = ?";
-    let args = [employeeName];
-    const rows = await db.query(query, args);
-    console.log(`Employee removed: ${employeeInfo.first_name} ${employeeInfo.last_name}`);
-}
-
-
-
-
-// add a department
-async function addDepartment(departmentInfo) {
-    const departmentName = departmentInfo.departmentName;
-    let query = `INSERT INTO department (department) VALUES (?)`;
-    let args = [departmentName];
-    const rows = await db.query(query, args);
-    console.log(`Added department named ${departmentName}`);
-}
-
-
-// add a role
-async function addRole(roleInfo) {
-    console.log(roleInfo);
-    const department = roleInfo.getDepartmentNames;
-    const salary = roleInfo.salary;
-    const title = employeeInfo.title;
-    const role_id = roleInfo.role_id;
-     let query = `INSERT INTO role (title, salary, role_id, department) VALUES (?, ?, ?, ?)`;
-    let args  = [title, salary, role_id, department];
-    const rows = await db.query(query, args);
-    console.log(`Added role ${employeeInfo.title}`);
-}
-
-// end of db calls
-
-
-
-
-// prompts for app to run in Terminal
-
-async function firstPrompt() {
-    return inquirer
-    .prompt([
+function init() {
+    inquirer.prompt([
         {
-            type: "list",
-            message: "What would you like to do?",
-            name: "action",
+            type: 'list',
+            name: 'init',
+            message: 'What would you like to do?',
             choices: [
-                "View all departments",
-                "View all employees",
-                "View all roles",
-                 "Update employee role",
-                "Add department",
-                "Add employee",
-                "Remove employee",
-                "Add role",
-                "Exit"
+                'View all Departments', 'View all Roles', 'View all Employees', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Delete Employee', 'Exit'
             ]
         }
-    ]);
-};
-// view employees info
-async function getAddEmployeeInfo() {
-    const manager = await getManagerNames();
-    console.log(manager);
-    const title = await getRoles();
-    const departments = await getDepartmentNames();
-    return inquirer 
-    .prompt([
-        {
-            type: "input",
-            name: "first_name",
-            message: "What is the employee's first name?"
-        },
-        {
-            type: "input",
-            name: "last_name",
-            message: "What is the employee's last name?",
-        },
-        {
-            type: "list",
-            name: "title",
-            message: "What is the employee's role?",
-            choices: [
-                // content from db
-                ... title
-            ]
-        },
-        {
-            type: "list",
-            name: "manager",
-            message: "Who is the employee's manager?",
-            choices: [
-                ...manager
-           
-            ]
-        },
-        {
-            type: "list",
-            name: "department",
-            message: "What is this employee's department?",
-            choices: [
-                ... departments
-            ]
+    ]).then((answers) => {
+        switch(answers.init) {
+            case 'View all Departments':
+                viewDepartments();
+                break;
+            case 'View all Roles':
+                viewRoles();
+                break;
+            case 'View all Employees':
+                viewEmployees();
+                break;
+            case 'Add Department':
+                addDepartment();
+                break;
+            case 'Add Role':
+                addRole();
+                break;
+            case 'Add Employee':
+                addEmployee();
+                break;
+            case 'Update Employee Role':
+                updateEmployee();
+                break;
+            case 'Delete Employee':
+                deleteEmployee();
+                break;
+            case 'Exit':
+                connection.end();
+                console.log('Goodbye');
+                break;
         }
-    ]);
-};
-
-
-async function getRemoveEmployeeInfo() {
-    const employees = await getEmployeeNames();
-    return inquirer
-    .prompt([
-        {
-            type: "list",
-            message: "Which employee would you like to remove?",
-            name: "employeeName",
-            choices: [
-                //content from db
-                ... employees
-            ]
-        }
-    ])
-}
-
-
-
-// view department info
-async function getDepartmentInfo() {
-    return inquirer
-    .prompt([
-        {
-            type: "input",
-            message: "What is the name of the new department",
-            name: "departmentName"
-        }
-    ]);
-}
-
-async function getRoleInfo() {
-    const departments = await getDepartmentNames();
-    return inquirer
-    .prompt([
-        {
-            type: "input",
-            message: "What is the title of the new role?",
-            name: "roleName"
-
-        },
-        {
-            type: "input",
-            message: "What is the salary of the new role?",
-            name: "salary"
-        },
-        {
-            type: "list",
-            message: "Which department uses this role?",
-            name: "departmentName",
-            choices: [
-                // content from db
-                ... departments
-            ]
-        }
-    ]);
-}
-
-
-async function getUpdateEmployeeRoleInfo() {
-    const employees = await getEmployeeNames();
-    const title = await getRoles();
-    return inquirer
-    .prompt([
-        {
-            type: "list",
-            message: "Which employee do you want to update?",
-            name: "employeeName",
-            choices: [
-                // content from db
-                ... employees
-            ]
-        },
-        {
-            type: "list",
-            message: "What is the employee's new role?",
-            name: "title",
-            choices: [
-                /// content from db
-                ... title
-            ]
-        }
-    ])
-    .then(answers => {
-        console.log("answers: ", answers);
-        return answers;
     })
-
 }
 
-async function main() {
-    let exitLoop = false;
-    while(!exitLoop) {
-        const prompt = await firstPrompt();
+// Functions
 
-        switch(prompt.action) {
-            case 'Add department': {
-                const newDepartmentName = await getDepartmentInfo();
-                await addDepartment(newDepartmentName);
-                break;
+//add Departments
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'What is the name of the new department?',
+            default: () => {},
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                }else {
+                    console.log("A department's name is required.");
+                    return false;
+                }
             }
+        }
+    ]).then((answers) => {
+        insertDepartment(answers.name);
+    });
+}
 
-            case 'Add employee': {
-                const newEmployee = await getAddEmployeeInfo();
-                console.log("add an employee");
-                console.log(newEmployee);
-                await addEmployee(newEmployee);
-                break;
+// insert Department
+function insertDepartment(newDepart) {
+    connection.query(`INSERT INTO departments SET ?`, new Department(newDepart), (err, res) => {
+        if (err) throw err;
+        console.log(`Added department ${newDepart} to Departments`);
+        init();
+    });
+}
+
+// add Roles
+function addRole() {
+    const array = [];
+    getDepartmentsAsync()
+    .then(data => {
+        for (let i=0; i<data.length; i++) {
+            array.push(data[i])
+        }
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'title',
+            message: 'What is the title of the new role?',
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'What is the salary of the new role?',
+            validate: nameInput => {
+                if (nameInput && !isNaN(nameInput)) {
+                    return true;
+                }else {
+                    console.log('Please be sure to only enter numbers.')
+                    return false;
+                }
             }
-
-            case 'Add role': {
-                const newRole = await getRoleInfo();
-                console.log("add a role");
-                await addRole(newRole);
-                break;
+        },
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Which department uses this role?',
+            choices: array
+        }
+    ]).then(answers => {
+        let departmentId;
+        for (let i = 0; i < array.length; i++) {
+            if (answers.department === array[i].name) {
+                departmentId = array[i].id;
             }
+        }
+        insertRole(answers.title, answers.salary, departmentId);
+    })
+}
 
-            case 'Remove employee': {
-                const employee = await getRemoveEmployeeInfo();
-                await removeEmployee(employee);
-                break;
-            }
-
-
-            case 'Update employee role': {
-                const roleName = await getUpdateEmployeeRoleInfo();
-                console.log(roleName);
-                await updateEmployeeRole(roleName);
-                break;
-            }
-
-            case 'View all departments': {
-                await viewAllDepartments();
-                break;
-            }
-
-            case 'View all employees': {
-                await viewAllEmployees();
-                break;
-            }
+function insertRole(title, salary, department_id) {
+    connection.query(`INSERT INTO roles SET ?`, new Role(title, salary, department_id), (err, res) => {
+        if (err) throw err;
+        console.log(`Added ${title} to Roles`);
+        init();
+    });
+}
 
 
-            case 'View all roles': {
-                await viewAllRoles();
-                break;
-            }
+// add Employees
+// get an array of objects:
 
-            case 'Exit': {
-                exitLoop = true;
-                process.exit(0);
-                return;
-            }
+function addEmployee() {
+    const rolesData = [];
+    const rolesNames = [];
 
-            default:
-                console.log(`Internal warning. Shouldn't get this action was ${prompt.action}`);
+    const employeesData = [];
+    const employeeNames = ['No Manager'];
 
-        };
-    }
-};
+   getRolesAsync()
+   .then(data => {
+       for (let i = 0; i < data.length; i++) {
+           rolesData.push(data[i]);
+           rolesNames.push(data[i].role)
+       }
 
+       getEmployeesAsync()
+       .then(data => {
+           for (let i = 0; i < data.length; i++) {
+               employeesData.push(data[i]);
+               employeesNames.push(data[i].last_name)
+           }
+       }).catch(err => {
+           console.log(err);
+       })
+   }).catch(err => {
+       console.log(err);
+   });
 
+   inquirer.prompt([
+       {
+           type: 'input',
+           name: 'firstName',
+           message: "What's the employee's first name?"
+       },
+       {
+           type: 'input',
+           name: 'lastName',
+           message: "What's the employee's last name?"
+       },
+       {
+           type: 'list',
+           name: 'role',
+           message: "What is the employee's role?",
+           choices: rolesNames
+       },
+       {
+           type: 'list',
+           name: 'manager',
+           message: "Who is the employee's manager?",
+           choices: employeesNames
+       }
+   ]).then(answers => {
+       let roleId;
+       let managerId;
 
+       for (let i = 0; i < rolesData.length; i++) {
+           if (answers.role === rolesData[i].role) {
+               roleId = rolesData[i].id;
+           }
+       }
 
-process.on("exit", async function(code) {
-    await db.close();
-    return console.log(`About to exit with code ${code}`);
-});
+       for (let i = 0; i < employeesData.length; i++) {
+           if (answers.manager === employeesData[i].last_name) {
+               managerId = employeesData[i].id;
+           }else if (answers.manager === 'No Manager') {
+               managerId = null;
+           }
+       }
+       insertEmployee(answers.first_name, answers.last_name, roleId, managerId);
+   });
 
-main();
+}

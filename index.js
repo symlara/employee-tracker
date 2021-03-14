@@ -64,7 +64,6 @@ function init() {
                 break;
             case 'Exit':
                 console.log('Goodbye');
-                connection.end();
                 break;
         }
     })

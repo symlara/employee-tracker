@@ -13,6 +13,6 @@ This app was built by installing the following:
 * console.table
 
 ## Usage
-Here's a walkthrough video of the application being ran within Terminal using the node index.js command: <!-- video link here
+Here's a walkthrough video of the application being ran within Terminal using the node index.js command: 
 
 

@@ -16,3 +16,4 @@ This app was built by installing the following:
 Here's a walkthrough video of the application being ran within Terminal using the node index.js command: 
 
 
+<img width="359" alt="Screen Shot 2021-03-13 at 11 27 37 PM" src="https://user-images.githubusercontent.com/40181569/111058562-15eef300-8455-11eb-8b27-d34dfe6d828e.png">

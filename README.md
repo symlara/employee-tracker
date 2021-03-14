@@ -17,3 +17,5 @@ Here's a walkthrough video of the application being ran within Terminal using th
 
 
 <img width="359" alt="Screen Shot 2021-03-13 at 11 27 37 PM" src="https://user-images.githubusercontent.com/40181569/111058562-15eef300-8455-11eb-8b27-d34dfe6d828e.png">
+
+<img width="589" alt="Screen Shot 2021-03-13 at 11 29 27 PM" src="https://user-images.githubusercontent.com/40181569/111058571-269f6900-8455-11eb-9291-e6b83a5de2e8.png">
